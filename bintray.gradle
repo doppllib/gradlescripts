@@ -1,0 +1,42 @@
+
+buildscript {
+    repositories {
+        jcenter()
+    }
+    dependencies {
+        classpath 'com.jfrog.bintray.gradle:gradle-bintray-plugin:1.7.3'
+    }
+}
+
+apply plugin: 'com.jfrog.bintray'
+
+bintray {
+    user = project.hasProperty('bintrayUser') ? project.property('bintrayUser') : ''
+    key = project.hasProperty('bintrayApiKey') ? project.property('bintrayApiKey') : ''
+    publications = ['mavenJava']
+    pkg {
+
+        repo = 'maven'
+        name = project.ext.hasProperty('bintrayName') ? project.ext.getProperty('bintrayName') : project.name
+        userOrg = 'doppllib'
+
+        licenses = ['Apache-2.0']
+        vcsUrl = project.ext.bintrayGitUrl
+        version {
+            name = version
+        }
+    }
+}
+task(checkReleaseVersion){
+  doLast{
+    if(!isReleaseBuild()){
+      throw new IllegalArgumentException("Version $project.version is a SNAPSHOT")
+    }
+  }
+}
+
+bintrayUpload.dependsOn.add(checkReleaseVersion)
+
+def isReleaseBuild(){
+    return !project.version.contains('SNAPSHOT')
+}
