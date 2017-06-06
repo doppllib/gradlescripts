@@ -17,7 +17,7 @@ bintray {
     pkg {
 
         repo = 'maven'
-        name = project.ext.hasProperty('bintrayName') ? project.ext.getProperty('bintrayName') : project.name
+        name = project.ext.has('artifactId') ? project.ext.get('artifactId') : project.name
         userOrg = 'doppllib'
 
         licenses = ['Apache-2.0']

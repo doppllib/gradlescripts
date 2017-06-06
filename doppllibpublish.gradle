@@ -11,7 +11,7 @@ publishing {
     publications {
         mavenJava(MavenPublication) {
             from components.java
-            artifactId project.ext.hasProperty("artifactId") ? project.ext.hasProperty("artifactId") : project.name
+            artifactId project.ext.has("artifactId") ? project.ext.get("artifactId") : project.name
             artifact(dopplArchive) {
                 classifier 'doppl'
                 extension 'jar'
