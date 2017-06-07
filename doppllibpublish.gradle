@@ -9,15 +9,28 @@ artifacts {
 
 publishing {
     publications {
+      if(project.ext.has("javaVersion")){
         mavenJava(MavenPublication) {
-            from components.java
-            artifactId project.ext.has("artifactId") ? project.ext.get("artifactId") : project.name
-            artifact(dopplArchive) {
-                classifier 'doppl'
-                extension 'jar'
-            }
-            artifact sourcesJar
+          version = project.ext.get("javaVersion")
+          from components.java
+          artifactId project.ext.has("artifactId") ? project.ext.get("artifactId") : project.name
+          artifact sourcesJar
         }
+      }
+      mavenDoppl(MavenPublication) {
+          artifact(dopplArchive)
+          artifactId project.ext.has("artifactId") ? project.ext.get("artifactId") : project.name
+          artifact sourcesJar
+          pom.withXml {
+              def dependencies = asNode().appendNode('dependencies')
+              configurations.getByName("doppl").getResolvedConfiguration().getFirstLevelModuleDependencies().each {
+                  def dependency = dependencies.appendNode('dependency')
+                  dependency.appendNode('groupId', it.moduleGroup)
+                  dependency.appendNode('artifactId', it.moduleName)
+                  dependency.appendNode('version', it.moduleVersion)
+              }
+          }
+      }
     }
     repositories {
         maven {

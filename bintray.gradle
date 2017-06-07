@@ -13,7 +13,14 @@ apply plugin: 'com.jfrog.bintray'
 bintray {
     user = project.hasProperty('bintrayUser') ? project.property('bintrayUser') : ''
     key = project.hasProperty('bintrayApiKey') ? project.property('bintrayApiKey') : ''
-    publications = ['mavenJava']
+    publications = []
+    //if(publishing.publications)
+    def pubs = project.extensions.getByName("publishing").getPublications()
+    for(pub in pubs)
+    {
+      publications += pub.name
+    }
+    
     pkg {
 
         repo = 'maven'
