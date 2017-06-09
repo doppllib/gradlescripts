@@ -20,7 +20,7 @@ bintray {
     {
       publications += pub.name
     }
-    
+
     pkg {
 
         repo = 'maven'
@@ -47,3 +47,21 @@ bintrayUpload.dependsOn.add(checkReleaseVersion)
 def isReleaseBuild(){
     return !project.version.contains('SNAPSHOT')
 }
+
+task (readmeTemplate){
+  doLast{
+    copyTemplate()
+  }
+}
+
+def copyTemplate(){
+  File template = new File("README_TEMPLATE.md")
+  if(template.exists()){
+    String templateText = template.text
+    File outFile = new File("README.md")
+    outFile.delete()
+    outFile << templateText.replace("{{GROUP}}", group).replace("{{VERSION}}", version)
+  }
+}
+
+publish.dependsOn.add(readmeTemplate)
