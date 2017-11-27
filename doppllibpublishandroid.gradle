@@ -1,6 +1,6 @@
-task sourcesJar(type: Jar, dependsOn: classes) {
+task sourcesJar(type: Jar) {
+    from android.sourceSets.main.java.srcDirs
     classifier = 'sources'
-    from sourceSets.main.allSource
 }
 
 artifacts {
@@ -9,7 +9,7 @@ artifacts {
 
 publishing {
     publications {
-      if(project.ext.has("javaVersion") && !project.ext.has("skipJavaPublication")){
+      if(project.ext.has("javaVersion")){
         mavenJava(MavenPublication) {
           version = project.ext.get("javaVersion")
           from components.java

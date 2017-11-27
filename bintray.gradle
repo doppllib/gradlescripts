@@ -13,6 +13,8 @@ apply plugin: 'com.jfrog.bintray'
 bintray {
     user = project.hasProperty('bintrayUser') ? project.property('bintrayUser') : ''
     key = project.hasProperty('bintrayApiKey') ? project.property('bintrayApiKey') : ''
+    publish = true
+    override = true
     publications = []
     //if(publishing.publications)
     def pubs = project.extensions.getByName("publishing").getPublications()
@@ -23,7 +25,7 @@ bintray {
 
     pkg {
 
-        repo = 'maven'
+        repo = 'maven2'
         name = project.ext.has('artifactId') ? project.ext.get('artifactId') : project.name
         userOrg = 'doppllib'
 
