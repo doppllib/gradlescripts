@@ -10,6 +10,17 @@ buildscript {
 
 apply plugin: 'com.jfrog.bintray'
 
+def checkFileExists(String urlString)
+{
+  java.net.URL url = new java.net.URL(urlString);
+  java.net.HttpURLConnection connection = (java.net.HttpURLConnection)url.openConnection();
+  connection.setRequestMethod("GET");
+  connection.connect();
+
+  int code = connection.getResponseCode();
+  return code <= 299;
+}
+
 bintray {
     user = project.hasProperty('bintrayUser') ? project.property('bintrayUser') : ''
     key = project.hasProperty('bintrayApiKey') ? project.property('bintrayApiKey') : ''
@@ -18,9 +29,16 @@ bintray {
     publications = []
     //if(publishing.publications)
     def pubs = project.extensions.getByName("publishing").getPublications()
+
     for(pub in pubs)
     {
-      publications += pub.name
+      String pubUrl = "https://dl.bintray.com/doppllib/maven2/" + pub.groupId.replace(".", "/") +"/"+ pub.artifactId +"/"+ pub.version +"/"+ pub.artifactId +"-"+ pub.version +".pom"
+      if(checkFileExists(pubUrl)){
+        logger.warn("Publication exists "+ pubUrl)
+      }
+      else{
+        publications += pub.name
+      }
     }
 
     pkg {
