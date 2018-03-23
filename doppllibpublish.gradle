@@ -18,7 +18,7 @@ publishing {
         }
       }
       mavenDoppl(MavenPublication) {
-          artifact(dopplArchive)
+          artifact(j2objcArchive)
           artifactId project.ext.has("artifactId") ? project.ext.get("artifactId") : project.name
           artifact sourcesJar
           pom.withXml {
@@ -29,12 +29,18 @@ publishing {
                   dependency.appendNode('artifactId', it.moduleName)
                   dependency.appendNode('version', it.moduleVersion)
               }
+              configurations.getByName("j2objc").getResolvedConfiguration().getFirstLevelModuleDependencies().each {
+                  def dependency = dependencies.appendNode('dependency')
+                  dependency.appendNode('groupId', it.moduleGroup)
+                  dependency.appendNode('artifactId', it.moduleName)
+                  dependency.appendNode('version', it.moduleVersion)
+              }
           }
       }
     }
     repositories {
         maven {
-            url dopplMavenDeploy
+            url j2objcMavenDeploy
         }
     }
 }

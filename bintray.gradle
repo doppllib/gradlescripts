@@ -32,7 +32,7 @@ bintray {
 
     for(pub in pubs)
     {
-      String pubUrl = "https://dl.bintray.com/doppllib/maven2/" + pub.groupId.replace(".", "/") +"/"+ pub.artifactId +"/"+ pub.version +"/"+ pub.artifactId +"-"+ pub.version +".pom"
+      String pubUrl = "https://dl.bintray.com/doppllib/j2objc/" + pub.groupId.replace(".", "/") +"/"+ pub.artifactId +"/"+ pub.version +"/"+ pub.artifactId +"-"+ pub.version +".pom"
       if(checkFileExists(pubUrl)){
         logger.warn("Publication exists "+ pubUrl)
       }
@@ -43,7 +43,7 @@ bintray {
 
     pkg {
 
-        repo = 'maven2'
+        repo = 'j2objc'
         name = project.ext.has('artifactId') ? project.ext.get('artifactId') : project.name
         userOrg = 'doppllib'
 

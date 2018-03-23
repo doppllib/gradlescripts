@@ -34,7 +34,7 @@ publishing {
     }
     repositories {
         maven {
-            url dopplMavenDeploy
+            url j2objcMavenDeploy
         }
     }
 }
