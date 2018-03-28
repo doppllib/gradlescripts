@@ -40,7 +40,7 @@ publishing {
     }
     repositories {
         maven {
-            url j2objcMavenDeploy
+            url (project.hasProperty('j2objcMavenDeploy') ? project.property('j2objcMavenDeploy') : 'file://nope/')
         }
     }
 }
