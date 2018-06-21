@@ -1,0 +1,89 @@
+
+buildscript {
+    repositories {
+        jcenter()
+    }
+    dependencies {
+        classpath 'com.jfrog.bintray.gradle:gradle-bintray-plugin:1.7.3'
+    }
+}
+
+def ourRepo = "kotlin"
+def ourOrg = "touchlabpublic"
+
+apply plugin: 'com.jfrog.bintray'
+
+def checkFileExists(String urlString)
+{
+  java.net.URL url = new java.net.URL(urlString);
+  java.net.HttpURLConnection connection = (java.net.HttpURLConnection)url.openConnection();
+  connection.setRequestMethod("GET");
+  connection.connect();
+
+  int code = connection.getResponseCode();
+  return code <= 299;
+}
+
+bintray {
+    user = project.hasProperty('bintrayUser') ? project.property('bintrayUser') : ''
+    key = project.hasProperty('bintrayApiKey') ? project.property('bintrayApiKey') : ''
+    publish = true
+    override = true
+    publications = []
+    //if(publishing.publications)
+    def pubs = project.extensions.getByName("publishing").getPublications()
+
+    for(pub in pubs)
+    {
+      String pubUrl = "https://dl.bintray.com/${ourOrg}/${ourRepo}/" + pub.groupId.replace(".", "/") +"/"+ pub.artifactId +"/"+ pub.version +"/"+ pub.artifactId +"-"+ pub.version +".pom"
+      if(checkFileExists(pubUrl)){
+        logger.warn("Publication exists "+ pubUrl)
+      }
+      else{
+        publications += pub.name
+      }
+    }
+
+    pkg {
+        repo = ourRepo
+        name = project.ext.has('artifactId') ? project.ext.get('artifactId') : project.name
+        userOrg = ourOrg
+
+        licenses = ['Apache-2.0']
+        vcsUrl = project.ext.bintrayGitUrl
+        version {
+            name = version
+        }
+    }
+}
+task(checkReleaseVersion){
+  doLast{
+    if(!isReleaseBuild()){
+      throw new IllegalArgumentException("Version $project.version is a SNAPSHOT")
+    }
+  }
+}
+
+bintrayUpload.dependsOn.add(checkReleaseVersion)
+
+def isReleaseBuild(){
+    return !project.version.contains('SNAPSHOT')
+}
+
+task (readmeTemplate){
+  doLast{
+    copyTemplate()
+  }
+}
+
+def copyTemplate(){
+  File template = new File("README_TEMPLATE.md")
+  if(template.exists()){
+    String templateText = template.text
+    File outFile = new File("README.md")
+    outFile.delete()
+    outFile << templateText.replace("{{GROUP}}", group).replace("{{VERSION}}", version)
+  }
+}
+
+publish.dependsOn.add(readmeTemplate)
