@@ -1,0 +1,15 @@
+publishing {
+    /*publications {
+        mavenJava(MavenPublication) {
+          from components.java
+          artifactId project.ext.has("artifactId") ? project.ext.get("artifactId") : project.name
+          artifact sourcesJar
+        }
+      }*/
+
+    repositories {
+        maven {
+            url (project.hasProperty('j2objcMavenDeploy') ? project.property('j2objcMavenDeploy') : 'file://nope/')
+        }
+    }
+}
